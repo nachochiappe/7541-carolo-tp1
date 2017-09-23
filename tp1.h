@@ -8,31 +8,6 @@
 #ifndef TP1_H_
 #define TP1_H_
 
-typedef struct t_parametro {
-	char param_1[256];
-	char param_2[256];
-	char param_3[256];
-	char param_4[256];
-	char param_5[256];
-	char param_6[256];
-	char param_7[256];
-	char param_8[256];
-	char param_9[256];
-	char param_10[256];
-} t_parametro;
-
-typedef struct TDA_Doc {
-	char funcion[31];
-	char descr[256];
-	char autor[21];
-	char fecha[11];
-	char version[11];
-	t_parametro param;
-	char devuelve[256];
-	char pre[256];
-	char pos[256];
-} TDA_Doc;
-
 /*
  * Crea el documentador inicializando su estructura con los datos necesarios.
  *
