@@ -21,7 +21,7 @@ typedef struct TDA_Doc {
 } TDA_Doc;
 
 int generarCabeceraHTML (FILE *arch_HTML, char *arch_salida) {
-	arch_HTML = fopen(arch_salida, "r+");
+	arch_HTML = fopen(arch_salida, "a");
 	fputs("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n", arch_HTML);
 	fputs("<html>\n", arch_HTML);
 	fputs("<head>\n", arch_HTML);
@@ -34,22 +34,24 @@ int generarCabeceraHTML (FILE *arch_HTML, char *arch_salida) {
 }
 
 int generarContenidoHTML (FILE *arch_HTML, char *arch_salida, TDA_Doc *tda) {
-	arch_HTML = fopen(arch_salida, "r+");
-	fputs("<h3>Funci&oacute;n: <a name=”[valor]”>[valor]</a></h3>", arch_HTML);
-	fputs("<dl>\n<dt>\nDescripci&oacute;n</dt>\n<dd>[valor]</dd>\n</dl>\n", arch_HTML);
-	fputs("<dl>\n<dt>\nAutor</dt>\n<dd>[valor]</dd>\n</dl>\n", arch_HTML);
-	fputs("<dl>\n<dt>\nFecha</dt>\n<dd>[valor]</dd>\n</dl>\n", arch_HTML);
-	fputs("<dl>\n<dt>\nVersion</dt>\n<dd>[valor]</dd>\n</dl>\n", arch_HTML);
-	fputs("<dl>\n<dt>\nPar&aacute;metro: [nombre]</dt>\n<dd>[valor]</dd>\n</dl>\n", arch_HTML);
-	fputs("<dl>\n<dt>\nRetorno</dt>\n<dd>[valor]</dd>\n</dl>\n", arch_HTML);
-	fputs("<dl>\n<dt>\nPre-Condici&oacute;n</dt>\n<dd>[valor]</dd>\n</dl>\n", arch_HTML);
-	fputs("<dl>\n<dt>\nPost-Condici&oacute;n</dt>\n<dd>[valor]</dd>\n</dl>\n", arch_HTML);
+	arch_HTML = fopen(arch_salida, "a");
+	fputs("\t\t<div>\n", arch_HTML);
+	fputs("\t\t\t<h3>Funci&oacute;n: <a name=\"[valor]\">[valor]</a></h3>\n", arch_HTML);
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Descripci&oacute;n</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Autor</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Fecha</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Version</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Par&aacute;metro: [nombre]</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Retorno</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Pre-Condici&oacute;n</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Post-Condici&oacute;n</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
+	fputs("\t\t</div>\n", arch_HTML);
 	fclose(arch_HTML);
 	return (0);
 }
 
 int generarFinHTML (FILE *arch_HTML, char *arch_salida) {
-	arch_HTML = fopen(arch_salida, "r+");
+	arch_HTML = fopen(arch_salida, "a");
 	fputs("\t</div>\n", arch_HTML);
 	fputs("</body>\n", arch_HTML);
 	fputs("</html>\n", arch_HTML);
@@ -64,7 +66,7 @@ int DocExtraerDocumentacion (TDA_Doc *tda, char *arch_entrada, char *arch_salida
 	char *palabra_res;
 	char *valor;
 	archivo = fopen(arch_entrada, "r");
-	arch_HTML = fopen(arch_entrada, "w");
+	arch_HTML = fopen(arch_salida, "w");
 	if (generarCabeceraHTML(arch_HTML, arch_salida) != 0) return RES_ERROR;
 	else
 	if (!archivo) return (-1);
@@ -73,9 +75,16 @@ int DocExtraerDocumentacion (TDA_Doc *tda, char *arch_entrada, char *arch_salida
 				if (strncmp(linea, "/*", 2) == 0) {
 					/* INICIO COMENTARIO */
 					while (fgets(linea, sizeof(linea), archivo)) {
-						if ((strncmp(linea, "*/", 2) == 0) || (strncmp(linea, " */", 3) == 0))
+						if ((strncmp(linea, "*/", 2) == 0) || (strncmp(linea, " */", 3) == 0)) {
 							/* FIN COMENTARIO */
+							/* CONSTRUIR HTML */
+							if (generarContenidoHTML(arch_HTML, arch_salida, tda) == 0) {
+								if (generarFinHTML(arch_HTML, arch_salida) != 0)
+									return RES_ERROR;
+							}
+							else return RES_ERROR;
 							break;
+						}
 						else if (strncmp(linea, "@", 1) == 0) {
 							palabra_res = strtok(linea, " ");
 							valor = strtok(NULL, "\0");
@@ -91,12 +100,6 @@ int DocExtraerDocumentacion (TDA_Doc *tda, char *arch_entrada, char *arch_salida
 							}
 						}
 					}
-				/* CONSTRUIR HTML */
-				if (generarContenidoHTML(arch_HTML, arch_salida, tda) == 0) {
-					if (generarFinHTML(arch_HTML, arch_salida) != 0)
-						return RES_ERROR;
-				}
-				else return RES_ERROR;
 				}
 			}
 	fclose(archivo);

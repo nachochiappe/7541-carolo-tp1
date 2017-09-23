@@ -26,7 +26,7 @@ int main (int argc, char *argv[]) {
 		else return (-1);
 	}
 	else return (-1);
-	DocExtraerDocumentacion(tda, arch_entrada, arch_salida);
+	DocExtraerDocumentacion(&tda, arch_entrada, arch_salida);
 	/*
 	if (DocCrear(&tda) == 0) {
 		if (DocExtraerDocumentacion(&tda, arch_entrada, arch_salida) == 0) {
