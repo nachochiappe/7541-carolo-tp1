@@ -36,15 +36,49 @@ int generarCabeceraHTML (FILE *arch_HTML, char *arch_salida) {
 int generarContenidoHTML (FILE *arch_HTML, char *arch_salida, TDA_Doc *tda) {
 	arch_HTML = fopen(arch_salida, "a");
 	fputs("\t\t<div>\n", arch_HTML);
-	fputs("\t\t\t<h3>Funci&oacute;n: <a name=\"[valor]\">[valor]</a></h3>\n", arch_HTML);
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Descripci&oacute;n</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Autor</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Fecha</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Version</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Par&aacute;metro: [nombre]</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Retorno</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Pre-Condici&oacute;n</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Post-Condici&oacute;n</dt>\n\t\t\t\t<dd>[valor]</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+	fputs("\t\t\t<h1>Titulo</h1>\n", arch_HTML);
+
+	fputs("\t\t\t<h2>Subtitulo</h2>\n", arch_HTML);
+
+	fputs("\t\t\t<h3>Funci&oacute;n: <a name=\"", arch_HTML);
+	fputs(tda->funcion, arch_HTML);
+	fputs("\">", arch_HTML);
+	fputs(tda->funcion, arch_HTML);
+	fputs("</a></h3>\n", arch_HTML);
+
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Descripci&oacute;n</dt>\n\t\t\t\t<dd>", arch_HTML);
+	fputs(tda->descr, arch_HTML);
+	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Autor</dt>\n\t\t\t\t<dd>", arch_HTML);
+	fputs(tda->autor, arch_HTML);
+	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Fecha</dt>\n\t\t\t\t<dd>", arch_HTML);
+	fputs(tda->fecha, arch_HTML);
+	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Version</dt>\n\t\t\t\t<dd>", arch_HTML);
+	fputs(tda->version, arch_HTML);
+	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Par&aacute;metro: [nombre]</dt>\n\t\t\t\t<dd>", arch_HTML);
+	fputs(tda->param, arch_HTML);
+	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Retorno</dt>\n\t\t\t\t<dd>", arch_HTML);
+	fputs(tda->devuelve, arch_HTML);
+	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Pre-Condici&oacute;n</dt>\n\t\t\t\t<dd>", arch_HTML);
+	fputs(tda->pre, arch_HTML);
+	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Post-Condici&oacute;n</dt>\n\t\t\t\t<dd>", arch_HTML);
+	fputs(tda->pos, arch_HTML);
+	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
 	fputs("\t\t</div>\n", arch_HTML);
 	fclose(arch_HTML);
 	return (0);
@@ -94,7 +128,7 @@ int DocExtraerDocumentacion (TDA_Doc *tda, char *arch_entrada, char *arch_salida
 							else if (strcmp(palabra_res, "@fecha") == 0) strcpy(tda->fecha, valor);
 							else if (strcmp(palabra_res, "@version") == 0) strcpy(tda->version, valor);
 							else if (strcmp(palabra_res, "@param") == 0) strcpy(tda->param, valor);
-							else if (strcmp(palabra_res, "@devuelve") == 0) strcpy(tda->devuelve, valor);
+							else if (strcmp(palabra_res, "@return") == 0) strcpy(tda->devuelve, valor);
 							else if (strcmp(palabra_res, "@pre") == 0) strcpy(tda->pre, valor);
 							else if (strcmp(palabra_res, "@pos") == 0) strcpy(tda->pos, valor);
 							}
