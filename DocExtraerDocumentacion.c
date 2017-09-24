@@ -11,10 +11,11 @@
 typedef struct TDA_Doc {
 	char funcion[255];
 	char descr[255];
-	char autor[255];
-	char fecha[255];
-	char version[255];
-	char param[255];
+	char autor[50];
+	char fecha[15];
+	char version[15];
+	char param_nombre[50];
+	char param_valor[255];
 	char devuelve[255];
 	char pre[255];
 	char pos[255];
@@ -35,6 +36,7 @@ int generarCabeceraHTML (FILE *arch_HTML, char *arch_salida) {
 
 int generarContenidoHTML (FILE *arch_HTML, char *arch_salida, TDA_Doc *tda) {
 	arch_HTML = fopen(arch_salida, "a");
+
 	fputs("\t\t<div>\n", arch_HTML);
 
 	fputs("\t\t\t<h1>Titulo</h1>\n", arch_HTML);
@@ -63,8 +65,10 @@ int generarContenidoHTML (FILE *arch_HTML, char *arch_salida, TDA_Doc *tda) {
 	fputs(tda->version, arch_HTML);
 	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
 
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Par&aacute;metro: [nombre]</dt>\n\t\t\t\t<dd>", arch_HTML);
-	fputs(tda->param, arch_HTML);
+	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Par&aacute;metro: ", arch_HTML);
+	fputs(tda->param_nombre, arch_HTML);
+	fputs("</dt>\n\t\t\t\t<dd>", arch_HTML);
+	fputs(tda->param_valor, arch_HTML);
 	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
 
 	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Retorno</dt>\n\t\t\t\t<dd>", arch_HTML);
@@ -127,7 +131,13 @@ int DocExtraerDocumentacion (TDA_Doc *tda, char *arch_entrada, char *arch_salida
 							else if (strcmp(palabra_res, "@autor") == 0) strcpy(tda->autor, valor);
 							else if (strcmp(palabra_res, "@fecha") == 0) strcpy(tda->fecha, valor);
 							else if (strcmp(palabra_res, "@version") == 0) strcpy(tda->version, valor);
-							else if (strcmp(palabra_res, "@param") == 0) strcpy(tda->param, valor);
+							//else if (strcmp(palabra_res, "@param") == 0)  strcpy(tda->param_nombre, valor);
+							else if (strcmp(palabra_res, "@param") == 0) {
+								valor = strtok(valor, " ");
+								strcpy(tda->param_nombre, valor);
+								valor = strtok(NULL, "\0");
+								strcpy(tda->param_valor, valor);
+							}
 							else if (strcmp(palabra_res, "@return") == 0) strcpy(tda->devuelve, valor);
 							else if (strcmp(palabra_res, "@pre") == 0) strcpy(tda->pre, valor);
 							else if (strcmp(palabra_res, "@pos") == 0) strcpy(tda->pos, valor);
