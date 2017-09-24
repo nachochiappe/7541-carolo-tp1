@@ -9,13 +9,13 @@
 #define RES_ERROR -1
 
 typedef struct TDA_Doc {
-	char funcion[255];
+	char funcion[50];
 	char descr[255];
 	char autor[50];
 	char fecha[15];
 	char version[15];
-	char param_nombre[50];
-	char param_valor[255];
+	char param_nombre[30];
+	char param_valor[100];
 	char devuelve[255];
 	char pre[255];
 	char pos[255];
@@ -116,12 +116,8 @@ int DocExtraerDocumentacion (TDA_Doc *tda, char *arch_entrada, char *arch_salida
 						if ((strncmp(linea, "*/", 2) == 0) || (strncmp(linea, " */", 3) == 0)) {
 							/* FIN COMENTARIO */
 							/* CONSTRUIR HTML */
-							if (generarContenidoHTML(arch_HTML, arch_salida, tda) == 0) {
-								if (generarFinHTML(arch_HTML, arch_salida) != 0)
-									return RES_ERROR;
-							}
+							if (generarContenidoHTML(arch_HTML, arch_salida, tda) == 0) break;
 							else return RES_ERROR;
-							break;
 						}
 						else if (strncmp(linea, "@", 1) == 0) {
 							palabra_res = strtok(linea, " ");
@@ -131,7 +127,6 @@ int DocExtraerDocumentacion (TDA_Doc *tda, char *arch_entrada, char *arch_salida
 							else if (strcmp(palabra_res, "@autor") == 0) strcpy(tda->autor, valor);
 							else if (strcmp(palabra_res, "@fecha") == 0) strcpy(tda->fecha, valor);
 							else if (strcmp(palabra_res, "@version") == 0) strcpy(tda->version, valor);
-							//else if (strcmp(palabra_res, "@param") == 0)  strcpy(tda->param_nombre, valor);
 							else if (strcmp(palabra_res, "@param") == 0) {
 								valor = strtok(valor, " ");
 								strcpy(tda->param_nombre, valor);
@@ -143,6 +138,8 @@ int DocExtraerDocumentacion (TDA_Doc *tda, char *arch_entrada, char *arch_salida
 							else if (strcmp(palabra_res, "@pos") == 0) strcpy(tda->pos, valor);
 							}
 						}
+					if (generarFinHTML(arch_HTML, arch_salida) != 0)
+						return RES_ERROR;
 					}
 				}
 			}
