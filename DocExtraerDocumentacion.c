@@ -30,18 +30,15 @@ int generarCabeceraHTML (FILE *arch_HTML, char *arch_salida) {
 	fputs("</head>\n", arch_HTML);
 	fputs("<body>\n", arch_HTML);
 	fputs("\t<div>\n", arch_HTML);
+	fputs("\t\t<div>\n", arch_HTML);
+	fputs("\t\t\t<h1>Titulo</h1>\n", arch_HTML);
+	fputs("\t\t\t<h2>Subtitulo</h2>\n", arch_HTML);
 	fclose(arch_HTML);
 	return (0);
 }
 
 int generarContenidoHTML (FILE *arch_HTML, char *arch_salida, TDA_Doc *tda) {
 	arch_HTML = fopen(arch_salida, "a");
-
-	fputs("\t\t<div>\n", arch_HTML);
-
-	fputs("\t\t\t<h1>Titulo</h1>\n", arch_HTML);
-
-	fputs("\t\t\t<h2>Subtitulo</h2>\n", arch_HTML);
 
 	fputs("\t\t\t<h3>Funci&oacute;n: <a name=\"", arch_HTML);
 	fputs(tda->funcion, arch_HTML);
