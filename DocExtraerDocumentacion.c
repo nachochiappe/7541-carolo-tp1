@@ -5,28 +5,14 @@
 #include <stdio.h>
 #include <string.h>
 
-#define RES_OK 0
-#define RES_ERROR -1
+#include "tp1.h"
 
-typedef struct t_parametro {
-	char param_nombre[30];
-	char param_valor[100];
-} t_parametro;
+int generarHTML (char *arch_entrada, char *arch_salida, TDA_Doc *tda) {
 
-typedef struct TDA_Doc {
-	char funcion[100];
-	char descr[255];
-	char autor[50];
-	char fecha[15];
-	char version[15];
-	t_parametro param[10];
-	char devuelve[255];
-	char pre[255];
-	char pos[255];
-} TDA_Doc;
+	FILE* arch_HTML = fopen(arch_salida, "w");
 
-int generarCabeceraHTML (FILE *arch_HTML, char *arch_salida) {
-	arch_HTML = fopen(arch_salida, "a");
+	/* CABECERA */
+
 	fputs("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.01 Transitional//EN\">\n", arch_HTML);
 	fputs("<html>\n", arch_HTML);
 	fputs("<head>\n", arch_HTML);
@@ -35,121 +21,118 @@ int generarCabeceraHTML (FILE *arch_HTML, char *arch_salida) {
 	fputs("<body>\n", arch_HTML);
 	fputs("\t<div>\n", arch_HTML);
 	fputs("\t\t<div>\n", arch_HTML);
-	fputs("\t\t\t<h1>Titulo</h1>\n", arch_HTML);
-	fputs("\t\t\t<h2>Subtitulo</h2>\n", arch_HTML);
-	fclose(arch_HTML);
-	return (0);
-}
+	fputs("\t\t\t<h1>Documentador</h1>\n", arch_HTML);
+	fputs("\t\t\t<h2>", arch_HTML);
+	fputs(arch_entrada, arch_HTML);
+	fputs("</h2>\n", arch_HTML);
 
-int generarContenidoHTML (FILE *arch_HTML, char *arch_salida, TDA_Doc *tda, unsigned char i) {
+	/* CONTENIDO */
 
-	arch_HTML = fopen(arch_salida, "a");
+	for (unsigned int i = 0; i < (tda->cant_bloques); i++) {
 
-	fputs("\t\t\t<h3>Funci&oacute;n: <a name=\"", arch_HTML);
-	fputs(tda->funcion, arch_HTML);
-	fputs("\">", arch_HTML);
-	fputs(tda->funcion, arch_HTML);
-	fputs("</a></h3>\n", arch_HTML);
+		fputs("\t\t\t<h3>Funci&oacute;n: <a name=\"", arch_HTML);
+		fputs((tda->bloque[i]).funcion, arch_HTML);
+		fputs("\">", arch_HTML);
+		fputs((tda->bloque[i]).funcion, arch_HTML);
+		fputs("</a></h3>\n", arch_HTML);
 
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Descripci&oacute;n</dt>\n\t\t\t\t<dd>", arch_HTML);
-	fputs(tda->descr, arch_HTML);
-	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
-
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Autor</dt>\n\t\t\t\t<dd>", arch_HTML);
-	fputs(tda->autor, arch_HTML);
-	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
-
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Fecha</dt>\n\t\t\t\t<dd>", arch_HTML);
-	fputs(tda->fecha, arch_HTML);
-	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
-
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Version</dt>\n\t\t\t\t<dd>", arch_HTML);
-	fputs(tda->version, arch_HTML);
-	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
-
-	for (unsigned char j = 0; j < i; j++) {
-		fputs("\t\t\t<dl>\n\t\t\t\t<dt>Par&aacute;metro: ", arch_HTML);
-		fputs((tda->param[j]).param_nombre, arch_HTML);
-		fputs("</dt>\n\t\t\t\t<dd>", arch_HTML);
-		fputs((tda->param[j]).param_valor, arch_HTML);
+		fputs("\t\t\t<dl>\n\t\t\t\t<dt>Descripci&oacute;n</dt>\n\t\t\t\t<dd>", arch_HTML);
+		fputs((tda->bloque[i]).descr, arch_HTML);
 		fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+		fputs("\t\t\t<dl>\n\t\t\t\t<dt>Autor</dt>\n\t\t\t\t<dd>", arch_HTML);
+		fputs((tda->bloque[i]).autor, arch_HTML);
+		fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+		fputs("\t\t\t<dl>\n\t\t\t\t<dt>Fecha</dt>\n\t\t\t\t<dd>", arch_HTML);
+		fputs((tda->bloque[i]).fecha, arch_HTML);
+		fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+		fputs("\t\t\t<dl>\n\t\t\t\t<dt>Version</dt>\n\t\t\t\t<dd>", arch_HTML);
+		fputs((tda->bloque[i]).version, arch_HTML);
+		fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+		for (unsigned int j = 0; j < (tda->bloque[i]).cant_param; j++) {
+			fputs("\t\t\t<dl>\n\t\t\t\t<dt>Par&aacute;metro: ", arch_HTML);
+			fputs(((tda->bloque[i]).param[j]).param_nombre, arch_HTML);
+			fputs("</dt>\n\t\t\t\t<dd>", arch_HTML);
+			fputs(((tda->bloque[i]).param[j]).param_valor, arch_HTML);
+			fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+		}
+
+		fputs("\t\t\t<dl>\n\t\t\t\t<dt>Retorno</dt>\n\t\t\t\t<dd>", arch_HTML);
+		fputs((tda->bloque[i]).devuelve, arch_HTML);
+		fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+		fputs("\t\t\t<dl>\n\t\t\t\t<dt>Pre-Condici&oacute;n</dt>\n\t\t\t\t<dd>", arch_HTML);
+		fputs((tda->bloque[i]).pre, arch_HTML);
+		fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+		fputs("\t\t\t<dl>\n\t\t\t\t<dt>Post-Condici&oacute;n</dt>\n\t\t\t\t<dd>", arch_HTML);
+		fputs((tda->bloque[i]).pos, arch_HTML);
+		fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+
+		fputs("\t\t</div>\n", arch_HTML);
 	}
 
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Retorno</dt>\n\t\t\t\t<dd>", arch_HTML);
-	fputs(tda->devuelve, arch_HTML);
-	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
+	/* FINAL */
 
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Pre-Condici&oacute;n</dt>\n\t\t\t\t<dd>", arch_HTML);
-	fputs(tda->pre, arch_HTML);
-	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
-
-	fputs("\t\t\t<dl>\n\t\t\t\t<dt>Post-Condici&oacute;n</dt>\n\t\t\t\t<dd>", arch_HTML);
-	fputs(tda->pos, arch_HTML);
-	fputs("</dd>\n\t\t\t</dl>\n", arch_HTML);
-
-	fputs("\t\t</div>\n", arch_HTML);
-	fclose(arch_HTML);
-	return (0);
-}
-
-int generarFinHTML (FILE *arch_HTML, char *arch_salida) {
-	arch_HTML = fopen(arch_salida, "a");
 	fputs("\t</div>\n", arch_HTML);
 	fputs("</body>\n", arch_HTML);
 	fputs("</html>\n", arch_HTML);
+
 	fclose(arch_HTML);
 	return (0);
 }
 
 int DocExtraerDocumentacion (TDA_Doc *tda, char *arch_entrada, char *arch_salida) {
 	FILE *archivo;
-	FILE *arch_HTML;
 	char linea[255];
 	char *palabra_res;
 	char *valor;
-	unsigned char i;
+	unsigned char i = 0;
+	unsigned char j;
 	archivo = fopen(arch_entrada, "r");
-	arch_HTML = fopen(arch_salida, "w");
-	if (generarCabeceraHTML(arch_HTML, arch_salida) != 0) return RES_ERROR;
-	else
-	if (!archivo) return (-1);
+	if (!archivo) return (RES_ERROR);
 		else {
 			while (fgets(linea, sizeof(linea), archivo)) {
 				if (strncmp(linea, "/*", 2) == 0) {
 					/* INICIO COMENTARIO */
-					i = 0;
+					j = 0;
 					while (fgets(linea, sizeof(linea), archivo)) {
 						if ((strncmp(linea, "*/", 2) == 0) || (strncmp(linea, " */", 3) == 0)) {
 							/* FIN COMENTARIO */
-							/* CONSTRUIR HTML */
-							if (generarContenidoHTML(arch_HTML, arch_salida, tda, i) == 0) break;
-							else return RES_ERROR;
+							i++;
+							tda->cant_bloques = i;
+							break;
 						}
 						else if (strncmp(linea, "@", 1) == 0) {
 							palabra_res = strtok(linea, " ");
 							valor = strtok(NULL, "\0");
-							if (strcmp(palabra_res, "@funcion") == 0) strcpy(tda->funcion, valor);
-							else if (strcmp(palabra_res, "@descr") == 0) strcpy(tda->descr, valor);
-							else if (strcmp(palabra_res, "@autor") == 0) strcpy(tda->autor, valor);
-							else if (strcmp(palabra_res, "@fecha") == 0) strcpy(tda->fecha, valor);
-							else if (strcmp(palabra_res, "@version") == 0) strcpy(tda->version, valor);
+							if (strcmp(palabra_res, "@funcion") == 0) strcpy((tda->bloque[i]).funcion, valor);
+							else if (strcmp(palabra_res, "@descr") == 0) strcpy((tda->bloque[i]).descr, valor);
+							else if (strcmp(palabra_res, "@autor") == 0) strcpy((tda->bloque[i]).autor, valor);
+							else if (strcmp(palabra_res, "@fecha") == 0) strcpy((tda->bloque[i]).fecha, valor);
+							else if (strcmp(palabra_res, "@version") == 0) strcpy((tda->bloque[i]).version, valor);
 							else if (strcmp(palabra_res, "@param") == 0) {
 								valor = strtok(valor, " ");
-								strcpy((tda->param[i]).param_nombre, valor);
+								strcpy(((tda->bloque[i]).param[j]).param_nombre, valor);
 								valor = strtok(NULL, "\0");
-								strcpy((tda->param[i]).param_valor, valor);
-								i++;
+								strcpy(((tda->bloque[i]).param[j]).param_valor, valor);
+								j++;
+								(tda->bloque[i]).cant_param = j;
 							}
-							else if (strcmp(palabra_res, "@return") == 0) strcpy(tda->devuelve, valor);
-							else if (strcmp(palabra_res, "@pre") == 0) strcpy(tda->pre, valor);
-							else if (strcmp(palabra_res, "@pos") == 0) strcpy(tda->pos, valor);
-							}
+							else if (strcmp(palabra_res, "@return") == 0) strcpy((tda->bloque[i]).devuelve, valor);
+							else if (strcmp(palabra_res, "@pre") == 0) strcpy((tda->bloque[i]).pre, valor);
+							else if (strcmp(palabra_res, "@pos") == 0) strcpy((tda->bloque[i]).pos, valor);
 						}
-					if (generarFinHTML(arch_HTML, arch_salida) != 0)
-						return RES_ERROR;
 					}
 				}
 			}
-	fclose(archivo);
-	return (0);
+			fclose(archivo);
+		}
+	if (generarHTML(arch_entrada, arch_salida, tda) == 0) {
+		return (RES_OK);
+	}
+	else return (RES_ERROR);
 }
