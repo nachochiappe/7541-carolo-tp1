@@ -90,6 +90,7 @@ int DocExtraerDocumentacion (TDA_Doc *tda, char *arch_entrada, char *arch_salida
 	char linea[255];
 	char *palabra_res;
 	char *valor;
+	char tiene_tokens = 0;
 	unsigned char i = 0;
 	unsigned char j;
 	archivo = fopen(arch_entrada, "r");
@@ -102,11 +103,15 @@ int DocExtraerDocumentacion (TDA_Doc *tda, char *arch_entrada, char *arch_salida
 					while (fgets(linea, sizeof(linea), archivo)) {
 						if ((strncmp(linea, "*/", 2) == 0) || (strncmp(linea, " */", 3) == 0)) {
 							/* FIN COMENTARIO */
-							i++;
-							tda->cant_bloques = i;
+							if (tiene_tokens == 1) {
+								i++;
+								tda->cant_bloques = i;
+							}
+							tiene_tokens = 0;
 							break;
 						}
 						else if (strncmp(linea, "@", 1) == 0) {
+							tiene_tokens = 1;
 							palabra_res = strtok(linea, " ");
 							valor = strtok(NULL, "\0");
 							if (strcmp(palabra_res, "@funcion") == 0) strcpy((tda->bloque[i]).funcion, valor);

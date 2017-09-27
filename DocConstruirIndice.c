@@ -9,10 +9,11 @@
 #include <stdio.h>
 #include <string.h>
 #include "DocConstruirIndice.h"
+#include "tp1.h"
+
 int DocConstruirIndice (TDA_Doc* tda, char* arch_indice) {
 	FILE *archivoIndice = fopen(arch_indice,"w");
-	char	documento[MAX_LINEA],
-			lineaIndice[MAX_LINEA];
+	char	documento[MAX_LINEA];
 	/*
 	 * ENCABEZADO HTML
 	 */
@@ -39,20 +40,21 @@ int DocConstruirIndice (TDA_Doc* tda, char* arch_indice) {
 	/*
 	 * GENERO "documento" para usarlo en la linea de cada hypervinculo del indice
 	 */
-	strncpy(documento, arch_indice,(strlen(arch_indice)-strlen(".idx.html\0")));
+	unsigned char longitud = strlen(arch_indice) - strlen(".idx.html");
+	strncpy(documento, arch_indice, longitud);
+	documento[longitud] = '\0';
 	strcat(documento, ".html");
 	/*
 	 * genero cada linea
 	 */
-	for(int bloqueActual=0; bloqueActual < tda->cant_bloques;bloqueActual++) {
-		strcpy(lineaIndice,"<li><a href=\"");
-		strcat(lineaIndice,documento);
-		strcat(lineaIndice,"#");
-		strcat(lineaIndice,tda->bloque[bloqueActual].funcion);
-		strcat(lineaIndice,"\">");
-		strcat(lineaIndice,tda->bloque[bloqueActual].funcion);
-		strcat(lineaIndice,"</a></li>");
-		fputs(lineaIndice,archivoIndice);
+	for (unsigned int i = 0; i < tda->cant_bloques; i++) {
+		fputs("\t\t\t<li><a href=\"", archivoIndice);
+		fputs(documento, archivoIndice);
+		fputs("#", archivoIndice);
+		fputs((tda->bloque[i]).funcion, archivoIndice);
+		fputs("\">", archivoIndice);
+		fputs((tda->bloque[i]).funcion, archivoIndice);
+		fputs("</a></li>", archivoIndice);
 	}
 	/*
 	 * FIN DE ARCHIVO HTML
@@ -63,5 +65,5 @@ int DocConstruirIndice (TDA_Doc* tda, char* arch_indice) {
 	fputs("</body>\n", archivoIndice);
 	fputs("</html>", archivoIndice);
 	fclose(archivoIndice);
-	return 0;
+	return (0);
 }
